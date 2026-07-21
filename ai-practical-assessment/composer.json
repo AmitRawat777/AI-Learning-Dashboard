@@ -1,0 +1,91 @@
+{
+    "name": "acme/ai-practical-assessment",
+    "description": "Drupal 11 project for AI Practical Assessment",
+    "type": "project",
+    "license": "GPL-2.0-or-later",
+    "homepage": "https://www.drupal.org/project/drupal",
+    "support": {
+        "docs": "https://www.drupal.org/docs/user_guide/en/index.html",
+        "chat": "https://www.drupal.org/node/2670892"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        }
+    ],
+    "require": {
+        "composer/installers": "^2.3",
+        "drupal/core-composer-scaffold": "^11",
+        "drupal/core-project-message": "^11",
+        "drupal/core-recommended": "^11",
+        "drupal/core-recipe-unpack": "^11",
+        "drush/drush": "^13",
+        "php": ">=8.3"
+    },
+    "conflict": {
+        "drupal/drupal": "*"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true,
+            "drupal/core-composer-scaffold": true,
+            "drupal/core-project-message": true,
+            "drupal/core-recipe-unpack": true,
+            "php-http/discovery": true,
+            "symfony/runtime": true
+        },
+        "sort-packages": true
+    },
+    "extra": {
+        "drupal-scaffold": {
+            "locations": {
+                "web-root": "web/"
+            },
+            "file-mapping": {
+                "[web-root]/sites/development.services.yml": false
+            }
+        },
+        "installer-paths": {
+            "web/core": ["type:drupal-core"],
+            "web/libraries/{$name}": ["type:drupal-library"],
+            "web/modules/contrib/{$name}": ["type:drupal-module"],
+            "web/profiles/contrib/{$name}": ["type:drupal-profile"],
+            "web/themes/contrib/{$name}": ["type:drupal-theme"],
+            "drush/Commands/contrib/{$name}": ["type:drupal-drush"]
+        },
+        "drupal-core-project-message": {
+            "include-keys": ["homepage", "support"],
+            "post-create-project-cmd-message": [
+                "<bg=blue;fg=white>                                                         </>",
+                "<bg=blue;fg=white>  Congratulations, you've installed the Drupal codebase  </>",
+                "<bg=blue;fg=white>  from the ai-practical-assessment project.              </>",
+                "<bg=blue;fg=white>                                                         </>",
+                "",
+                "<bg=yellow;fg=black>Next steps</>:",
+                "  * Run <comment>../scripts/setup.sh</comment> from the project root",
+                "  * Read the user guide: https://www.drupal.org/docs/user_guide/en/index.html"
+            ]
+        }
+    },
+    "scripts": {
+        "drupal:install": [
+            "drush site:install standard --account-name=admin --account-pass=admin -y"
+        ],
+        "drupal:update": [
+            "drush updatedb -y",
+            "drush cache:rebuild"
+        ],
+        "drupal:config-import": [
+            "drush config:import -y"
+        ],
+        "drupal:enable-custom": [
+            "bash -c 'for module in web/modules/custom/*/; do [ -d \"$module\" ] || continue; name=$(basename \"$module\"); drush pm:enable \"$name\" -y 2>/dev/null || true; done'"
+        ],
+        "drupal:cache-clear": [
+            "drush cache:rebuild"
+        ]
+    }
+}

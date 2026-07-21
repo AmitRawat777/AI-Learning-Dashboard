@@ -60,11 +60,11 @@ step_start_ddev() {
 step_composer_install() {
   # Install PHP dependencies if vendor/ is missing.
   if has_vendor; then
-    log_info "backend/vendor/ exists — running composer install to sync"
+    log_info "vendor/ exists — running composer install to sync"
   else
-    log_info "backend/vendor/ missing — installing Composer dependencies"
+    log_info "vendor/ missing — installing Composer dependencies"
   fi
-  ddev composer install --working-dir=/var/www/html/backend --no-interaction 2>&1 | tee -a "${LOG_FILE}"
+  ddev composer install --no-interaction 2>&1 | tee -a "${LOG_FILE}"
   return 0
 }
 
@@ -137,7 +137,7 @@ step_ensure_admin_user() {
 
 step_enable_custom_modules() {
   # Enable every custom module found in web/modules/custom/.
-  local custom_dir="${PROJECT_ROOT}/backend/web/modules/custom"
+  local custom_dir="${PROJECT_ROOT}/web/modules/custom"
   local enabled_any=false
 
   if [[ ! -d "${custom_dir}" ]]; then

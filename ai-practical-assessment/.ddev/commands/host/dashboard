@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+## Description: Open the React Learning Dashboard (Vite on port 5173)
+## Usage: dashboard
+## Example: ddev dashboard
+
+set -eu -o pipefail
+ddev launch :5173/dashboard

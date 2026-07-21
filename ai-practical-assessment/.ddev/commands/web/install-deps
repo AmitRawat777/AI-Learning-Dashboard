@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+## Description: Install Composer (vendor/) and frontend npm dependencies
+## Usage: install-deps
+## Example: ddev install-deps
+
+set -eu -o pipefail
+bash /var/www/html/scripts/ddev-post-start.sh

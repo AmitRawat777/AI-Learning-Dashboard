@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+## Description: Run full project setup (Composer, Drupal, npm, Vite)
+## Usage: setup
+## Example: ddev setup
+
+set -eu -o pipefail
+bash "${DDEV_APPROOT}/scripts/setup.sh"

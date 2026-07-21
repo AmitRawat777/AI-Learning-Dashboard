@@ -1,7 +1,6 @@
 name: ai-practical-assessment
 type: drupal11
-docroot: backend/web
-composer_root: backend
+docroot: web
 php_version: "8.3"
 webserver_type: nginx-fpm
 xdebug_enabled: false
@@ -31,7 +30,7 @@ hooks:
         # Register git hooks and ensure scripts are executable before containers start.
         - exec-host: "bash scripts/ensure-git-hooks.sh"
     post-start:
-        # Install/sync all frontend deps on every start.
-        - exec: "bash /var/www/html/scripts/lib/npm-install.sh"
-        # First-time bootstrap: Composer, Drupal, modules, npm (no manual setup.sh).
+        # Inside container: composer + npm when vendor/node_modules are missing (fresh clone).
+        - exec: "bash /var/www/html/scripts/ddev-post-start.sh"
+        # On host: full Drupal setup (site:install, modules, admin) when needed.
         - exec-host: "DDEV_POST_START=1 bash scripts/bootstrap-if-needed.sh"

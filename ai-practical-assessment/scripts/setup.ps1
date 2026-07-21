@@ -112,7 +112,7 @@ function Test-HasNodeModules {
 }
 
 function Test-HasVendor {
-    return (Test-Path (Join-Path $ProjectRoot "backend\vendor"))
+    return (Test-Path (Join-Path $ProjectRoot "vendor\autoload.php"))
 }
 
 function Get-DdevUrl {
@@ -184,12 +184,12 @@ function Step-StartDdev {
 
 function Step-ComposerInstall {
     if (Test-HasVendor) {
-        Write-LogInfo "backend\vendor\ exists — running composer install to sync"
+        Write-LogInfo "vendor\ exists — running composer install to sync"
     }
     else {
-        Write-LogInfo "backend\vendor\ missing — installing Composer dependencies"
+        Write-LogInfo "vendor\ missing — installing Composer dependencies"
     }
-    Invoke-Ddev @("composer", "install", "--working-dir=/var/www/html/backend", "--no-interaction")
+    Invoke-Ddev @("composer", "install", "--no-interaction")
 }
 
 function Step-DrupalInstall {
@@ -252,7 +252,7 @@ function Step-ConfigImport {
 }
 
 function Step-EnableCustomModules {
-    $customDir = Join-Path $ProjectRoot "backend\web\modules\custom"
+    $customDir = Join-Path $ProjectRoot "web\modules\custom"
     if (-not (Test-Path $customDir)) {
         Write-LogInfo "No custom modules directory — skipping"
         return

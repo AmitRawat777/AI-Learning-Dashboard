@@ -123,9 +123,9 @@ has_node_modules() {
   [[ -d "${PROJECT_ROOT}/src/node_modules" ]]
 }
 
-# Return 0 if backend vendor directory exists.
+# Return 0 if Composer autoload exists at project root.
 has_vendor() {
-  [[ -d "${PROJECT_ROOT}/backend/vendor" ]]
+  [[ -f "${PROJECT_ROOT}/vendor/autoload.php" ]]
 }
 
 # ---------------------------------------------------------------------------

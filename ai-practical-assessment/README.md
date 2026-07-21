@@ -23,11 +23,20 @@ cd ai-practical-assessment
 ddev start
 ```
 
-On first `ddev start`, the project bootstraps itself (same as Option A).
+On first `ddev start`, DDEV runs `composer install` inside the container (creates `vendor/` and `web/core/`), then bootstraps Drupal and npm.
+
+**If you see a missing `vendor/autoload_runtime.php` error**, Composer did not finish. Run:
+
+```bash
+ddev composer install
+./setup.sh
+```
+
+Or in one step: `ddev restart` (post-start hooks run again).
 
 ### What gets installed automatically
 
-- PHP / Composer packages (`backend/vendor/`)
+- PHP / Composer packages (`vendor/`)
 - Drupal 11 + custom `ai_dashboard` module + seed data
 - Node.js / npm packages (`src/node_modules/`)
 - Vite dev server (hot reload on port 5173)
@@ -86,6 +95,10 @@ See [database/setup-notes.md](database/setup-notes.md) for endpoints and entity 
 ```
 ai-practical-assessment/
 ├── README.md
+├── composer.json          # Drupal 11 Composer project (committed)
+├── composer.lock          # Locked PHP dependencies (committed)
+├── vendor/                # PHP packages (gitignored — created by composer install)
+├── web/                   # Drupal docroot (gitignored: core/, contrib/)
 ├── candidate-info.md
 ├── requirements-analysis.md
 ├── acceptance-criteria.md
@@ -102,15 +115,14 @@ ai-practical-assessment/
 ├── pr-description.md
 ├── reflection.md
 ├── final-ai-usage-summary.md
-├── src/              React + Vite application
-├── tests/            Vitest unit and integration tests
-├── backend/          Drupal 11 (docroot: backend/web)
-├── scripts/          Setup scripts (bash + PowerShell)
-├── config/sync/      Drupal configuration export
-├── database/         Schema notes, seed data, optional dump
-├── ai-prompts/       AI prompt history by activity
-├── tool-specific/    Cursor workflow artifacts
-└── .ddev/            DDEV configuration
+├── src/                   React + Vite application
+├── tests/                 Vitest unit and integration tests
+├── scripts/               Setup scripts (bash + PowerShell)
+├── config/sync/           Drupal configuration export
+├── database/              Schema notes, seed data, optional dump
+├── ai-prompts/            AI prompt history by activity
+├── tool-specific/         Cursor workflow artifacts
+└── .ddev/                 DDEV configuration
 ```
 
 ## Prerequisites
@@ -167,10 +179,10 @@ setup.bat
 ### What the setup script does
 
 1. Starts DDEV containers (PHP 8.3, MariaDB 11.4, Node.js 22)
-2. Installs Composer dependencies in `backend/`
+2. Installs Composer dependencies (`composer install` → `vendor/` + `web/core/`)
 3. Installs Drupal 11 if not already installed
 4. Imports `database/dump.sql.gz` on first install (if present)
-5. Enables custom modules in `backend/web/modules/custom/`
+5. Enables custom modules in `web/modules/custom/`
 6. Runs database updates (`drush updatedb`) — seeds sample tasks
 7. Imports configuration from `config/sync/` (if YAML files exist)
 8. Clears Drupal caches
@@ -237,7 +249,7 @@ ddev drush config:export
 ddev drush config:import
 ddev drush uli                    # One-time login link
 
-# Composer (runs in backend/)
+# Composer (project root — same as standard Drupal)
 ddev composer require drupal/devel
 ddev composer update
 
@@ -254,7 +266,7 @@ ddev launch :5173                 # Vite dev server
 
 ## Composer scripts
 
-Run these from inside DDEV (they execute in `backend/`):
+Run these from inside DDEV (project root):
 
 ```bash
 ddev composer drupal:install        # Install Drupal (standard profile)
@@ -294,7 +306,7 @@ ddev export-db --file=database/dump.sql.gz
 
 ## Custom modules
 
-Place custom modules in `backend/web/modules/custom/`. The setup script auto-enables any module directory found there.
+Place custom modules in `web/modules/custom/`. The setup script auto-enables any module directory found there.
 
 Current custom modules:
 
@@ -368,7 +380,7 @@ ddev mutagen reset
 
 ```bash
 ddev delete -O           # Remove containers but keep files
-rm -rf backend/vendor backend/web/core
+rm -rf vendor web/core
 ./scripts/setup.sh       # Full reinstall
 ```
 

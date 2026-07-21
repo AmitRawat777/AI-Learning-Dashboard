@@ -4,13 +4,13 @@
 .ddev/.global_commands
 
 # Drupal
-backend/vendor/
-backend/web/core/
-backend/web/modules/contrib/
-backend/web/themes/contrib/
-backend/web/profiles/contrib/
-backend/web/sites/*/files/
-backend/.env
+vendor/
+web/core/
+web/modules/contrib/
+web/themes/contrib/
+web/profiles/contrib/
+web/sites/*/files/
+.env
 
 # Frontend
 src/node_modules/

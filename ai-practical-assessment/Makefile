@@ -21,4 +21,4 @@ logs:
 	ddev logs -f
 
 test:
-	ddev exec "cd /var/www/html/frontend && npm test"
+	ddev exec "cd /var/www/html/src && npm test"
