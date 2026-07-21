@@ -1,0 +1,4 @@
+@import "tailwindcss";
+
+/* Existing LearnTrack styles — pages will migrate to Tailwind incrementally. */
+@import "./styles/legacy.css";

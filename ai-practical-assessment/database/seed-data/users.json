@@ -1,0 +1,14 @@
+[
+  {
+    "name": "alex.learner",
+    "mail": "alex.learner@example.com",
+    "pass": "password",
+    "role": "learner"
+  },
+  {
+    "name": "sam.developer",
+    "mail": "sam.developer@example.com",
+    "pass": "password",
+    "role": "developer"
+  }
+]

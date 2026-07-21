@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&display=swap"
+      rel="stylesheet"
+    />
+    <title>AI Learning Dashboard</title>
+  </head>
+  <body>
+    <div id="root">
+      <div id="boot-fallback" class="boot-fallback">
+        <h1>Loading LearnTrack…</h1>
+        <p>
+          Use <strong>https://ai-practical-assessment.ddev.site:5173/dashboard</strong>
+          (HTTPS on port 5173).
+        </p>
+      </div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      window.setTimeout(function () {
+        var fallback = document.getElementById("boot-fallback");
+        if (!fallback) return;
+        fallback.innerHTML +=
+          '<p class="boot-fallback__warn">Still loading? Check the browser console (F12) or run <code>ddev start</code>.</p>';
+      }, 6000);
+    </script>
+  </body>
+</html>

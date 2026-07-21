@@ -1,0 +1,37 @@
+name: ai-practical-assessment
+type: drupal11
+docroot: backend/web
+composer_root: backend
+php_version: "8.3"
+webserver_type: nginx-fpm
+xdebug_enabled: false
+additional_hostnames: []
+additional_fqdns: []
+database:
+    type: mariadb
+    version: "11.4"
+use_dns_when_possible: true
+composer_version: "2"
+nodejs_version: "22"
+corepack_enable: true
+web_environment: []
+# Expose Vite dev server through ddev-router (see https://docs.ddev.com/en/stable/users/usage/vite/).
+web_extra_exposed_ports:
+    - name: vite
+      container_port: 5173
+      http_port: 5172
+      https_port: 5173
+# Keep the Vite dev server running inside the web container.
+web_extra_daemons:
+    - name: vite
+      command: "npm run dev -- --host 0.0.0.0 --port 5173 --strictPort"
+      directory: /var/www/html/src
+hooks:
+    pre-start:
+        # Register git hooks and ensure scripts are executable before containers start.
+        - exec-host: "bash scripts/ensure-git-hooks.sh"
+    post-start:
+        # Install/sync all frontend deps on every start.
+        - exec: "bash /var/www/html/scripts/lib/npm-install.sh"
+        # First-time bootstrap: Composer, Drupal, modules, npm (no manual setup.sh).
+        - exec-host: "DDEV_POST_START=1 bash scripts/bootstrap-if-needed.sh"

@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# After git pull, sync new dependencies automatically.
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+cd "${ROOT}"
+
+if [[ ! -f .local/setup-complete ]]; then
+  exec bash "${ROOT}/scripts/bootstrap-if-needed.sh"
+fi
+
+# Light sync when already set up: npm + composer via DDEV if running.
+if command -v ddev >/dev/null 2>&1 && ddev describe 2>/dev/null | grep -qi running; then
+  ddev composer install --working-dir=/var/www/html/backend --no-interaction >/dev/null 2>&1 || true
+  ddev exec "bash /var/www/html/scripts/lib/npm-install.sh" >/dev/null 2>&1 || true
+  ddev drush updatedb -y >/dev/null 2>&1 || true
+fi

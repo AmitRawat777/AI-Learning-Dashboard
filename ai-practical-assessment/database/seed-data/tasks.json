@@ -1,0 +1,47 @@
+[
+  {
+    "title": "Complete Drupal JSON:API module study",
+    "description": "Read documentation and build a sample endpoint.",
+    "category": "learning",
+    "priority": "high",
+    "status": "in_progress",
+    "owner": "alex.learner",
+    "due_date": "+3 days"
+  },
+  {
+    "title": "Build React dashboard components",
+    "description": "Summary cards, task list, and detail view.",
+    "category": "project",
+    "priority": "high",
+    "status": "planned",
+    "owner": "sam.developer",
+    "due_date": "+7 days"
+  },
+  {
+    "title": "Write integration tests",
+    "description": "Cover create, list, update, and summary counts.",
+    "category": "project",
+    "priority": "medium",
+    "status": "planned",
+    "owner": "alex.learner",
+    "due_date": "+10 days"
+  },
+  {
+    "title": "Review accessibility checklist",
+    "description": "Stretch goal: WCAG basics for forms and navigation.",
+    "category": "research",
+    "priority": "low",
+    "status": "completed",
+    "owner": "sam.developer",
+    "due_date": "-2 days"
+  },
+  {
+    "title": "Fix overdue migration script",
+    "description": "Legacy data import needs date field mapping.",
+    "category": "project",
+    "priority": "medium",
+    "status": "planned",
+    "owner": "alex.learner",
+    "due_date": "-5 days"
+  }
+]

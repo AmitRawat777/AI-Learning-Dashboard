@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# After clone or checkout, bootstrap the project if dependencies are missing.
+set -euo pipefail
+
+# $3 = 1 only for branch checkouts (including initial clone checkout).
+if [[ "${3:-0}" != "1" ]]; then
+  exit 0
+fi
+
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+cd "${ROOT}"
+
+if [[ -f .local/setup-complete ]]; then
+  exit 0
+fi
+
+exec bash "${ROOT}/scripts/bootstrap-if-needed.sh"

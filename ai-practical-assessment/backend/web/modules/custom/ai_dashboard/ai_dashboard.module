@@ -1,0 +1,30 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * @file
+ * Install, update and uninstall functions for the AI Dashboard module.
+ */
+
+/**
+ * Email addresses for dashboard seed users (owner dropdown only).
+ *
+ * @return string[]
+ */
+function ai_dashboard_seeded_user_emails(): array {
+  return [
+    'alex.learner@example.com',
+    'sam.developer@example.com',
+  ];
+}
+
+/**
+ * Implements hook_help().
+ */
+function ai_dashboard_help(string $route_name, \Drupal\Core\Routing\RouteMatchInterface $route_match): string {
+  if ($route_name === 'help.page.ai_dashboard') {
+    return '<p>' . t('AI Dashboard module provides backend support for the React learning dashboard.') . '</p>';
+  }
+  return '';
+}

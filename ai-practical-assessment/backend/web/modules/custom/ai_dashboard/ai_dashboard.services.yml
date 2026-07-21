@@ -1,0 +1,7 @@
+services:
+  ai_dashboard.task_serializer:
+    class: Drupal\ai_dashboard\Service\TaskSerializer
+    arguments: ['@datetime.time']
+  ai_dashboard.task_validator:
+    class: Drupal\ai_dashboard\Service\TaskValidator
+    arguments: ['@entity_type.manager']

@@ -1,0 +1,29 @@
+# DDEV (keep config.yaml; ignore local overrides)
+.ddev/.homeadditions
+.ddev/config.local.yaml
+.ddev/.global_commands
+
+# Drupal
+backend/vendor/
+backend/web/core/
+backend/web/modules/contrib/
+backend/web/themes/contrib/
+backend/web/profiles/contrib/
+backend/web/sites/*/files/
+backend/.env
+
+# Frontend
+src/node_modules/
+src/dist/
+src/.env
+
+# Logs & OS
+scripts/logs/
+.local/
+*.log
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/

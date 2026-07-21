@@ -1,0 +1,14 @@
+{
+  "name": "ai-practical-assessment",
+  "private": true,
+  "description": "Drupal 11 + React monorepo — dependencies install automatically on clone or ddev start",
+  "scripts": {
+    "setup": "bash scripts/setup.sh",
+    "setup:win": "powershell -ExecutionPolicy Bypass -File scripts/setup.ps1",
+    "start": "ddev start",
+    "stop": "ddev stop",
+    "restart": "ddev restart",
+    "test": "ddev exec \"cd /var/www/html/src && npm test\"",
+    "logs": "ddev logs -f"
+  }
+}

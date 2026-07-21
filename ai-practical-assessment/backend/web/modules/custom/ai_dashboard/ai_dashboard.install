@@ -1,0 +1,210 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall hooks for AI Dashboard.
+ */
+
+declare(strict_types=1);
+
+use Drupal\ai_dashboard\Entity\ProjectTask;
+use Drupal\user\Entity\Role;
+use Drupal\user\Entity\User;
+
+/**
+ * Implements hook_install().
+ */
+function ai_dashboard_install(): void {
+  // Grant API access to anonymous and authenticated users for local dashboard.
+  user_role_grant_permissions('anonymous', ['access ai dashboard api']);
+  user_role_grant_permissions('authenticated', ['access ai dashboard api']);
+
+  _ai_dashboard_seed_users();
+  _ai_dashboard_seed_tasks();
+}
+
+/**
+ * Seed demo users for owner assignment.
+ */
+function _ai_dashboard_seed_users(): void {
+  _ai_dashboard_ensure_roles();
+
+  $users = [
+    [
+      'name' => 'alex.learner',
+      'mail' => 'alex.learner@example.com',
+      'pass' => 'password',
+      'role' => 'learner',
+    ],
+    [
+      'name' => 'sam.developer',
+      'mail' => 'sam.developer@example.com',
+      'pass' => 'password',
+      'role' => 'developer',
+    ],
+  ];
+
+  foreach ($users as $data) {
+    $existing = user_load_by_mail($data['mail']);
+    if ($existing) {
+      if (!$existing->hasRole($data['role'])) {
+        $existing->addRole($data['role']);
+        $existing->save();
+      }
+      continue;
+    }
+    $user = User::create([
+      'name' => $data['name'],
+      'mail' => $data['mail'],
+      'pass' => $data['pass'],
+      'status' => 1,
+    ]);
+    $user->addRole($data['role']);
+    $user->save();
+  }
+}
+
+/**
+ * Ensure custom roles exist for seeded dashboard users.
+ */
+function _ai_dashboard_ensure_roles(): void {
+  $roles = [
+    'learner' => 'Learner',
+    'developer' => 'Developer',
+  ];
+  foreach ($roles as $id => $label) {
+    if (!Role::load($id)) {
+      Role::create(['id' => $id, 'label' => $label])->save();
+      user_role_grant_permissions($id, ['access ai dashboard api']);
+    }
+  }
+}
+
+/**
+ * Seed sample project tasks for the dashboard.
+ */
+function _ai_dashboard_seed_tasks(): void {
+  $admin = User::load(1);
+  $alex = user_load_by_mail('alex.learner@example.com');
+  $sam = user_load_by_mail('sam.developer@example.com');
+
+  if (!$admin) {
+    return;
+  }
+
+  $ownerAlex = $alex ?: $admin;
+  $ownerSam = $sam ?: $admin;
+
+  $samples = [
+    [
+      'title' => 'Complete Drupal JSON:API module study',
+      'description' => 'Read documentation and build a sample endpoint.',
+      'category' => 'learning',
+      'priority' => 'high',
+      'status' => 'in_progress',
+      'owner_id' => $ownerAlex->id(),
+      'due_date' => date('Y-m-d', strtotime('+3 days')),
+    ],
+    [
+      'title' => 'Build React dashboard components',
+      'description' => 'Summary cards, task list, and detail view.',
+      'category' => 'project',
+      'priority' => 'high',
+      'status' => 'planned',
+      'owner_id' => $ownerSam->id(),
+      'due_date' => date('Y-m-d', strtotime('+7 days')),
+    ],
+    [
+      'title' => 'Write integration tests',
+      'description' => 'Cover create, list, update, and summary counts.',
+      'category' => 'project',
+      'priority' => 'medium',
+      'status' => 'planned',
+      'owner_id' => $ownerAlex->id(),
+      'due_date' => date('Y-m-d', strtotime('+10 days')),
+    ],
+    [
+      'title' => 'Review accessibility checklist',
+      'description' => 'Stretch goal: WCAG basics for forms and navigation.',
+      'category' => 'research',
+      'priority' => 'low',
+      'status' => 'completed',
+      'owner_id' => $ownerSam->id(),
+      'due_date' => date('Y-m-d', strtotime('-2 days')),
+    ],
+    [
+      'title' => 'Fix overdue migration script',
+      'description' => 'Legacy data import needs date field mapping.',
+      'category' => 'project',
+      'priority' => 'medium',
+      'status' => 'planned',
+      'owner_id' => $ownerAlex->id(),
+      'due_date' => date('Y-m-d', strtotime('-5 days')),
+    ],
+  ];
+
+  foreach ($samples as $data) {
+    $task = ProjectTask::create($data);
+    $task->save();
+  }
+}
+
+function ai_dashboard_update_9001(): void {
+  user_role_grant_permissions('anonymous', ['access ai dashboard api']);
+  user_role_grant_permissions('authenticated', ['access ai dashboard api']);
+
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $definition = $entity_type_manager->getDefinition('project_task');
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+
+  $database = \Drupal::database();
+  if (!$database->schema()->tableExists('project_task')) {
+    $update_manager->installEntityType($definition);
+  }
+
+  $count = \Drupal::entityQuery('project_task')->accessCheck(FALSE)->count()->execute();
+  if ((int) $count === 0) {
+    _ai_dashboard_seed_users();
+    _ai_dashboard_seed_tasks();
+  }
+}
+
+/**
+ * Assign learner/developer roles to seeded users on existing sites.
+ */
+function ai_dashboard_update_9002(): void {
+  _ai_dashboard_seed_users();
+}
+
+/**
+ * Ensure a usable administrator account exists for local Drupal admin access.
+ */
+function ai_dashboard_update_9003(): void {
+  $adminUser = getenv('DRUPAL_ADMIN_USER') ?: 'admin';
+  $adminPass = getenv('DRUPAL_ADMIN_PASS') ?: 'admin';
+  $adminMail = getenv('DRUPAL_ADMIN_MAIL') ?: "{$adminUser}@example.com";
+
+  if (!Role::load('administrator')) {
+    Role::create([
+      'id' => 'administrator',
+      'label' => 'Administrator',
+      'is_admin' => TRUE,
+    ])->save();
+  }
+
+  $account = user_load_by_name($adminUser);
+  if (!$account) {
+    $account = User::create([
+      'name' => $adminUser,
+      'mail' => $adminMail,
+      'pass' => $adminPass,
+      'status' => 1,
+    ]);
+    $account->save();
+  }
+
+  if (!$account->hasRole('administrator')) {
+    $account->addRole('administrator');
+    $account->save();
+  }
+}

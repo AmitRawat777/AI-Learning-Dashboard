@@ -1,0 +1,86 @@
+ai_dashboard.api.tasks.list:
+  path: '/api/tasks'
+  defaults:
+    _controller: '\Drupal\ai_dashboard\Controller\TaskApiController::list'
+  requirements:
+    _permission: 'access ai dashboard api'
+  methods: [GET]
+
+ai_dashboard.api.tasks.create:
+  path: '/api/tasks'
+  defaults:
+    _controller: '\Drupal\ai_dashboard\Controller\TaskApiController::post'
+  requirements:
+    _permission: 'access ai dashboard api'
+  methods: [POST]
+
+ai_dashboard.api.tasks.summary:
+  path: '/api/tasks/summary'
+  defaults:
+    _controller: '\Drupal\ai_dashboard\Controller\SummaryApiController::summary'
+  requirements:
+    _permission: 'access ai dashboard api'
+  methods: [GET]
+
+ai_dashboard.api.tasks.get:
+  path: '/api/tasks/{project_task}'
+  defaults:
+    _controller: '\Drupal\ai_dashboard\Controller\TaskApiController::get'
+  requirements:
+    _permission: 'access ai dashboard api'
+    project_task: \d+
+  methods: [GET]
+  options:
+    parameters:
+      project_task:
+        type: entity:project_task
+
+ai_dashboard.api.tasks.update:
+  path: '/api/tasks/{project_task}'
+  defaults:
+    _controller: '\Drupal\ai_dashboard\Controller\TaskApiController::update'
+  requirements:
+    _permission: 'access ai dashboard api'
+    project_task: \d+
+  methods: [PATCH]
+  options:
+    parameters:
+      project_task:
+        type: entity:project_task
+
+ai_dashboard.api.users.list:
+  path: '/api/users'
+  defaults:
+    _controller: '\Drupal\ai_dashboard\Controller\UserApiController::list'
+  requirements:
+    _permission: 'access ai dashboard api'
+  methods: [GET]
+
+ai_dashboard.vite.dashboard:
+  path: '/dashboard'
+  defaults:
+    _controller: '\Drupal\ai_dashboard\Controller\ViteRedirectController::redirectToVite'
+    destination: 'dashboard'
+  requirements:
+    _access: 'TRUE'
+
+ai_dashboard.vite.tasks:
+  path: '/tasks'
+  defaults:
+    _controller: '\Drupal\ai_dashboard\Controller\ViteRedirectController::redirectToVite'
+    destination: 'tasks'
+  requirements:
+    _access: 'TRUE'
+
+ai_dashboard.vite.tasks_sub:
+  path: '/tasks/{subpath}'
+  defaults:
+    _controller: '\Drupal\ai_dashboard\Controller\ViteRedirectController::redirectToVite'
+    destination: ''
+  requirements:
+    _access: 'TRUE'
+    subpath: '.+'
+  options:
+    parameters:
+      subpath:
+        type: string

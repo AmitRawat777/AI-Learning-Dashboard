@@ -1,0 +1,10 @@
+name: AI Dashboard
+type: module
+description: 'ProjectTask entity and REST API for the AI Learning Dashboard.'
+package: Custom
+core_version_requirement: ^11
+dependencies:
+  - drupal:user
+  - drupal:datetime
+  - drupal:text
+  - drupal:options
