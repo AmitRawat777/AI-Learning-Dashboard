@@ -26,6 +26,13 @@ export default defineConfig({
           clientPort: 5173,
         }
       : undefined,
+    // Vite 6+ blocks unknown Host headers — required for DDEV router access.
+    allowedHosts: [
+      "localhost",
+      "127.0.0.1",
+      ".ddev.site",
+      "ai-practical-assessment.ddev.site",
+    ],
     // Allow requests from *.ddev.site domains.
     cors: {
       origin: /https?:\/\/([A-Za-z0-9\-\.]+)?(\.ddev\.site)(?::\d+)?$/,

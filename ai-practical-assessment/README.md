@@ -343,6 +343,15 @@ ddev debug compose     # Inspect Docker Compose config
 
 Another service may be using ports 80, 443, or 5173. Stop conflicting services or run `ddev poweroff` and retry.
 
+### Vite shows "Blocked request. This host is not allowed"
+
+Vite 6 blocks unknown `Host` headers. The app must be opened via the DDEV URL (not `localhost:5173` on another machine):
+
+- **Use:** `https://ai-practical-assessment.ddev.site:5173/dashboard`
+- **Not:** `http://localhost:5173` when browsing through the DDEV router
+
+`src/vite.config.ts` includes `server.allowedHosts` for `*.ddev.site`. After pulling the fix, run `ddev restart`.
+
 ### Vite shows "Bad Gateway" or CORS errors
 
 1. Confirm Vite is running: `ddev logs | grep vite`
