@@ -2,20 +2,44 @@
 
 Drupal 11 + React monorepo with a one-command [DDEV](https://ddev.com/) local development environment.
 
-## Quick start (after clone)
+## Quick start (one command)
 
-**Only prerequisite on your machine:** [Docker](https://docs.docker.com/get-docker/) + [DDEV](https://ddev.com/get-started/) (install once globally — not part of this repo).
+**Prerequisites:** [Docker](https://docs.docker.com/get-docker/) must be installed and running. DDEV is installed automatically by the setup script if missing.
 
-### Option A — Clone and auto-setup (recommended)
+### After git clone — run ONE command:
+
+```bash
+git clone <repository-url> ai-practical-assessment
+cd ai-practical-assessment
+./install.sh
+```
+
+That's it. The script will:
+
+1. Verify Docker is running
+2. **Install DDEV** if not present (`curl -fsSL https://ddev.com/install.sh | bash`)
+3. Start DDEV containers
+4. Run `composer install` → `vendor/` + `web/core/`
+5. Install Drupal (first run only) + enable `ai_dashboard`
+6. Seed demo users and tasks
+7. Run `npm ci` in `src/`
+8. Start Vite on port **5173**
+9. Open the dashboard in your browser
+
+Equivalent commands: `./setup.sh` or `make`
+
+To skip automatic DDEV install: `AUTO_INSTALL_DDEV=0 ./install.sh`
+
+### Option A — Clone with git hooks (also automatic)
 
 ```bash
 git clone -c core.hooksPath=.githooks <repository-url> ai-practical-assessment
 cd ai-practical-assessment
 ```
 
-Setup runs **automatically** after clone (Composer, Drupal, npm, Vite, sample data). No manual `composer install`, `npm install`, or `drush` steps.
+Setup runs automatically via the `post-checkout` hook if Docker is already running.
 
-### Option B — Standard clone + `ddev start`
+### Option B — `ddev start` only (if already set up once)
 
 ```bash
 git clone <repository-url> ai-practical-assessment
@@ -23,16 +47,23 @@ cd ai-practical-assessment
 ddev start
 ```
 
-On first `ddev start`, DDEV runs `composer install` inside the container (creates `vendor/` and `web/core/`), then bootstraps Drupal and npm.
+On first `ddev start`, post-start hooks run `composer install` and bootstrap Drupal/npm.
 
-**If you see a missing `vendor/autoload_runtime.php` error**, Composer did not finish. Run:
+**If you see a missing `vendor/autoload_runtime.php` error**, run `./install.sh` instead.
+
+### Clone to any folder
+
+You **can** clone this repo to any directory (`~/Projects`, `~/Pictures`, `~/Desktop`, etc.). DDEV does not require a fixed path.
+
+DDEV registers the project **name** (`ai-practical-assessment` from `.ddev/config.yaml`) on **your machine** the first time you run `ddev start`. If you later move or copy the folder to a new path, run:
 
 ```bash
-ddev composer install
-./setup.sh
+ddev stop --unlist ai-practical-assessment
+cd /your/new/path/ai-practical-assessment
+ddev start
 ```
 
-Or in one step: `ddev restart` (post-start hooks run again).
+On a **new computer**, clone anywhere and run `ddev start` — no unlist needed.
 
 ### What gets installed automatically
 
@@ -330,6 +361,23 @@ cp src/.env.example src/.env
 ```
 
 ## Troubleshooting
+
+### DDEV won't start — "project root is already set to..."
+
+DDEV allows only **one folder per project name** on the same machine. This happens when you:
+
+- Copied the project to another directory (e.g. `Documents/` → `Pictures/`)
+- Cloned the repo twice in different locations
+
+**Fix:**
+
+```bash
+ddev stop --unlist ai-practical-assessment
+cd "/path/to/your/current/ai-practical-assessment"
+ddev start
+```
+
+This does **not** delete your database — it only clears DDEV's path registration so it can bind to the new folder.
 
 ### DDEV won't start
 

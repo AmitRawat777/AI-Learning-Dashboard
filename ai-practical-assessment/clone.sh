@@ -16,7 +16,5 @@ DIR="${2:-ai-practical-assessment}"
 git clone -c core.hooksPath=.githooks "${URL}" "${DIR}"
 cd "${DIR}"
 
-# post-checkout hook runs bootstrap; fallback if hooks did not run.
-if [[ ! -f .local/setup-complete ]]; then
-  bash scripts/setup.sh
-fi
+# Always run full setup (installs DDEV if needed).
+bash scripts/setup.sh

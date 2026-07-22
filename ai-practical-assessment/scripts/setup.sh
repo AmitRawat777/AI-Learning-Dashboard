@@ -35,11 +35,14 @@ trap 'log_error "Setup failed at line ${LINENO}. See ${LOG_FILE} for details."' 
 # ---------------------------------------------------------------------------
 
 step_preflight() {
-  # Verify required host tools are available.
-  require_command "ddev"
-  require_command "docker"
   ensure_project_root
   log_info "Project root: ${PROJECT_ROOT}"
+
+  # shellcheck source=lib/install-prerequisites.sh
+  source "${SCRIPT_DIR}/lib/install-prerequisites.sh"
+  ensure_docker
+  ensure_ddev
+
   return 0
 }
 
@@ -51,8 +54,20 @@ step_start_ddev() {
   fi
   if is_ddev_running; then
     log_info "DDEV is already running — skipping ddev start"
-  else
-    ddev start 2>&1 | tee -a "${LOG_FILE}"
+    return 0
+  fi
+
+  local project_name
+  project_name="$(grep -E '^name:' "${PROJECT_ROOT}/.ddev/config.yaml" | awk '{print $2}' | tr -d '\r')"
+
+  if ! ddev start 2>&1 | tee -a "${LOG_FILE}"; then
+    if grep -q "refusing to change" "${LOG_FILE}" && [[ -n "${project_name}" ]]; then
+      log_warn "DDEV path conflict — re-registering project at this folder"
+      ddev stop --unlist "${project_name}" 2>/dev/null || true
+      ddev start 2>&1 | tee -a "${LOG_FILE}"
+    else
+      return 1
+    fi
   fi
   return 0
 }

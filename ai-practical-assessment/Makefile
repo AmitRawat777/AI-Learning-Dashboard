@@ -1,10 +1,12 @@
 .DEFAULT_GOAL := setup
 
-.PHONY: setup start stop restart logs test
+.PHONY: setup install start stop restart logs test
 
 # Full automated setup after clone (idempotent). Running plain `make` does the same.
+install: setup
+
 setup:
-	@chmod +x scripts/setup.sh setup.sh clone.sh scripts/ensure-git-hooks.sh scripts/bootstrap-if-needed.sh scripts/lib/*.sh .githooks/* 2>/dev/null || true
+	@chmod +x install.sh setup.sh clone.sh scripts/ensure-git-hooks.sh scripts/bootstrap-if-needed.sh scripts/ddev-post-start.sh scripts/lib/*.sh .githooks/* 2>/dev/null || true
 	@bash scripts/ensure-git-hooks.sh
 	@./scripts/setup.sh
 

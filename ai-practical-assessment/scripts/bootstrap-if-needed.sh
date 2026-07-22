@@ -35,8 +35,13 @@ if is_setup_complete; then
   exit 0
 fi
 
-if ! command -v ddev >/dev/null 2>&1 || ! command -v docker >/dev/null 2>&1; then
-  log_warn "Docker + DDEV required. Install them, then run: ./setup.sh"
+if ! command -v docker >/dev/null 2>&1 || ! docker info >/dev/null 2>&1; then
+  log_warn "Docker is required. Run ./setup.sh from the project root (it will guide installation)."
+  exit 0
+fi
+
+if ! command -v ddev >/dev/null 2>&1; then
+  log_warn "DDEV not found — run ./setup.sh to install DDEV and all dependencies automatically."
   exit 0
 fi
 
